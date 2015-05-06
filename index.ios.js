@@ -1,15 +1,6 @@
 'use strict';
 var React = require('react-native');
 
-var Data = [
-  { in:true,  date:'2015-03-01' , title:'入境 🚁'},
-  { in:false, date:'2015-03-24' , title:'出境 ✈'},
-  { in:true,  date:'2015-04-01' , title:'入境 🚁'},
-  { in:false, date:'2015-04-24' , title:'出境 ✈'},
-  { in:true,  date:'2015-05-01' , title:'入境 🚁'},
-  { in:false, date:'2015-05-04' , title:'出境 ✈'},
-];
-
 var {
   AppRegistry,
   Text,
@@ -23,7 +14,8 @@ var {
 } = React;
 
 var NavigationBar = require('react-native-navbar');
-var HomePage = require('./HomePage');
+var HomePage      = require('./HomePage');
+var SettingPage   = require('./SettingPage');
 
 var CountDownDays = React.createClass({
   statics: {
@@ -58,7 +50,6 @@ var CountDownDays = React.createClass({
     var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     return {
       selectedTab: 'homeTab',
-      dataSource: ds.cloneWithRows(Data),
     };
   },
 
@@ -104,7 +95,7 @@ var CountDownDays = React.createClass({
               presses: this.state.presses + 1
             });
           }}>
-          {this._render_home('#21551C', 'More Tab')}
+          {this._render_more('#21551C', 'More Tab')}
         </TabBarIOS.Item>
       </TabBarIOS>
       );
@@ -130,8 +121,8 @@ var CountDownDays = React.createClass({
         style={styles.navigator}
         renderScene={this.renderScene}
         initialRoute={{
-          component: MorePage,
-          navigationBar: <NavigationBar title="设置" onNext={this.handleNext}/>
+          component: SettingPage,
+          navigationBar: <NavigationBar title="设置"/>
       }}>        
       </Navigator>
     );
