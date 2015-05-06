@@ -15,6 +15,7 @@ var {
 
 var NavigationBar = require('react-native-navbar');
 var HomePage      = require('./HomePage');
+var AddPage       = require('./AddPage');
 var SettingPage   = require('./SettingPage');
 
 var CountDownDays = React.createClass({
@@ -47,7 +48,6 @@ var CountDownDays = React.createClass({
   },  
 
   getInitialState: function() {
-    var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     return {
       selectedTab: 'homeTab',
     };
@@ -76,7 +76,7 @@ var CountDownDays = React.createClass({
       <TabBarIOS>
         <TabBarIOS.Item
           systemIcon="history"
-          badge={this.state.notifCount > 0 ? this.state.notifCount : undefined}
+          badge={undefined}
           selected={this.state.selectedTab === 'homeTab'}
           onPress={() => {
             this.setState({
@@ -84,7 +84,7 @@ var CountDownDays = React.createClass({
               notifCount: this.state.notifCount + 1,
             });
           }}>
-          {this._render_home('#783E33', 'Home Tab')}
+          {this._render_home()}
         </TabBarIOS.Item>
         <TabBarIOS.Item
           systemIcon="more"
@@ -95,7 +95,7 @@ var CountDownDays = React.createClass({
               presses: this.state.presses + 1
             });
           }}>
-          {this._render_more('#21551C', 'More Tab')}
+          {this._render_more()}
         </TabBarIOS.Item>
       </TabBarIOS>
       );
@@ -136,7 +136,14 @@ var CountDownDays = React.createClass({
 class AddDate extends React.Component {
   render() {
     return (
-      <TouchableOpacity onPress={() => alert('next') }>
+      <TouchableOpacity onPress={() => {
+        console.log(this.props)
+          this.props.navigator.push({
+            title: 'Add Record',
+            component: AddPage,
+            passProps: {foo: 'bar'}
+          });
+        }}>
         <Text style={styles.btn_add}>Add</Text>
       </TouchableOpacity>
     );
@@ -149,32 +156,7 @@ var styles = StyleSheet.create({
       fontSize: 25,  
       padding: 10,
   },  
-  row: {
-      flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderWidth: 0,
-  },
-  cell: {
-      flex: 1,
-      padding: 10,
-      backgroundColor: '#eeeeee',
-  },  
-  separator: {
-    height: 1,
-    backgroundColor: '#ffffff',
-  },  
-  listView: {
-    backgroundColor: '#eeeeee',
-  }, 
-  title: {
-      fontSize: 20,
-      textAlign: 'center',
-  },  
-  date: {
-      fontSize: 20,    
-      textAlign: 'center',
-  },
+
   btn_add: {
       color: '#0000FF',
       fontSize: 16,  
