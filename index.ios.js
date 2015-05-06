@@ -8,6 +8,7 @@ var {
   TabBarIOS,  
   ListView,
   Navigator,
+  NavigatorIOS,
   TouchableHighlight,
   StyleSheet,
   TouchableOpacity,
@@ -137,7 +138,6 @@ class AddDate extends React.Component {
   render() {
     return (
       <TouchableOpacity onPress={() => {
-        console.log(this.props)
           this.props.navigator.push({
             title: 'Add Record',
             component: AddPage,
