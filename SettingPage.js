@@ -24,7 +24,8 @@ var SettingPage =  React.createClass({
   render: function() {
     return (
       <View>
-        <Text>Settting</Text>
+        <Text> Settting </Text>
+        <Text> Settting 12312 3</Text>
       </View>
     );
   },  
