@@ -19,8 +19,8 @@ var SettingPage   = require('./SettingPage');
 
 var CountDownDays = React.createClass({
   statics: {
-    title: '<TabBarIOS>',
-    description: 'Tab-based navigation.'
+    title: 'CountDownDays',
+    description: 'Count how many days left that I am required to stay in this country',
   },
 
   renderScene(route, navigator) {
@@ -92,7 +92,7 @@ var CountDownDays = React.createClass({
         <NavigatorIOS ref="nav_home" style={styles.container} initialRoute={{
             component: HomePage,
             title: '出入境记录',
-            rightButtonTitle: 'Add',
+            rightButtonTitle: '增加',
             onRightButtonPress: this.onAddPageButtonPress,
         }} />
     );

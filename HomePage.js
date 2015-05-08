@@ -1,5 +1,5 @@
 'use strict';
-var React = require('react-native');
+var React    = require('react-native');
 
 var Data = [
   { in:true,  date:'2015-03-01' , title:'入境 🚁'},
@@ -17,6 +17,8 @@ var {
   TouchableHighlight,
   StyleSheet,
 } = React;
+
+var EditPage = require('./EditPage');
 
 var HomePage =  React.createClass({
   getInitialState: function() {
@@ -40,9 +42,17 @@ var HomePage =  React.createClass({
     );
   },
 
+
+  onEditPageButtonPress: function(id) {  
+      this.props.navigator.push({
+          title: '修改记录',
+          component: EditPage,
+      })
+  },
+
   renderRow: function(row: object, sectionID: number, rowID: number) { 
         return ( 
-            <TouchableHighlight onPress={() => this._pressRow(rowID)}>
+            <TouchableHighlight onPress={() => this.onEditPageButtonPress(rowID)}>
               <View>
                 <View style={styles.row}>
                   <View style={styles.cell}> 
@@ -60,8 +70,6 @@ var HomePage =  React.createClass({
 });
 
 module.exports = HomePage;
-
-
 
 var styles = StyleSheet.create({
   scene: {
@@ -82,8 +90,9 @@ var styles = StyleSheet.create({
   cell: {
       flex: 1,
       padding: 10,
+      height: 50,
       backgroundColor: '#eeeeee',
-  },  
+  },
   separator: {
     height: 1,
     backgroundColor: '#ffffff',
@@ -97,6 +106,7 @@ var styles = StyleSheet.create({
   },  
   date: {
       fontSize: 20,    
+      height:30,
       textAlign: 'center',
   },
 });
