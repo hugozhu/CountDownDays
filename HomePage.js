@@ -8,6 +8,7 @@ var Data = [
   { in:false, date:'2015-04-24' , title:'出境 ✈'},
   { in:true,  date:'2015-05-01' , title:'入境 🚁'},
   { in:false, date:'2015-05-04' , title:'出境 ✈'},
+  null,
 ];
 
 var {
@@ -51,9 +52,15 @@ var HomePage =  React.createClass({
   },
 
   renderRow: function(row: object, sectionID: number, rowID: number) { 
-        return ( 
+        if (row === null) {
+            return (
+              <View style={styles.separator} />
+            );
+        }
+        return (
             <TouchableHighlight onPress={() => this.onEditPageButtonPress(rowID)}>
               <View>
+                <View style={styles.separator} />
                 <View style={styles.row}>
                   <View style={styles.cell}> 
                       <Text style={styles.date}>{row.date}</Text> 
@@ -61,8 +68,7 @@ var HomePage =  React.createClass({
                   <View style={styles.cell}> 
                       <Text style={styles.title}>{row.title}</Text>                   
                   </View>
-                </View>              
-                <View style={styles.separator} />
+                </View>
               </View>
             </TouchableHighlight>
       );
@@ -98,7 +104,6 @@ var styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },  
   listView: {
-    backgroundColor: '#eeeeee',
   }, 
   title: {
       fontSize: 20,

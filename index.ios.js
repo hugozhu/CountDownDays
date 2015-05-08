@@ -21,29 +21,6 @@ var CountDownDays = React.createClass({
   statics: {
     title: 'CountDownDays',
     description: 'Count how many days left that I am required to stay in this country',
-  },
-
-  renderScene(route, navigator) {
-    var Component = route.component;
-    var navBar = route.navigationBar;
-
-    if (navBar) {
-      navBar = React.addons.cloneWithProps(navBar, {
-        navigator: navigator,
-        route: route
-      });
-    }
-
-    return (
-      <View style={styles.navigator}>
-        {navBar}
-        <Component navigator={navigator} route={route} />
-      </View>
-    );
-  },
-
-  handleNext() {
-    alert('Next button click handler');
   },  
 
   getInitialState: function() {
@@ -89,10 +66,14 @@ var CountDownDays = React.createClass({
 
   _render_home: function() {
     return (  
-        <NavigatorIOS ref="nav_home" style={styles.container} initialRoute={{
-            component: HomePage,
+        <NavigatorIOS ref="nav_home" style={styles.container} 
+          barTintColor='#000000' 
+          tintColor='#FFFFFF'
+          titleTextColor='#FFFFFF'
+          initialRoute={{
+            component: HomePage,            
             title: '出入境记录',
-            rightButtonTitle: '增加',
+            rightButtonTitle: '＋',
             onRightButtonPress: this.onAddPageButtonPress,
         }} />
     );
@@ -100,7 +81,11 @@ var CountDownDays = React.createClass({
 
   _render_more: function() {
     return (  
-        <NavigatorIOS ref="nav_more" style={styles.container} initialRoute={{
+        <NavigatorIOS ref="nav_more" style={styles.container} 
+            barTintColor='#000000' 
+            tintColor='#FFFFFF'
+            titleTextColor='#FFFFFF'        
+            initialRoute={{
             component: SettingPage,
             title: '设置'
         }} />
@@ -111,7 +96,8 @@ var CountDownDays = React.createClass({
 
 var styles = StyleSheet.create({
   container: {
-      flex: 1
+      flex: 1,
+      backgroundColor: '#ECF6E8',
   },  
   head: {
       textAlign: 'center',
