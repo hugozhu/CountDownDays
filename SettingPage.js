@@ -7,13 +7,6 @@ var {
   StyleSheet,  
 } = React;
 
-var styles = StyleSheet.create({  
-  title: {
-      fontSize: 20,
-      textAlign: 'center',
-  },  
-});
-
 var SettingPage =  React.createClass({
   getInitialState: function() {
     return {
@@ -23,7 +16,7 @@ var SettingPage =  React.createClass({
   
   render: function() {
     return (
-      <View>
+      <View style={styles.scene}>
         <Text> Settting </Text>
         <Text> Settting 12312 3</Text>
       </View>
@@ -32,3 +25,14 @@ var SettingPage =  React.createClass({
 });
 
 module.exports = SettingPage;
+
+var styles = StyleSheet.create({  
+  scene: {
+      paddingTop: 74,
+      flex: 1,
+  },    
+  title: {
+      fontSize: 20,
+      textAlign: 'center',
+  },  
+});

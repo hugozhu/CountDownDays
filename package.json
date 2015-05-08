@@ -7,6 +7,6 @@
   },
   "dependencies": {
     "react-native": "^0.4.1",
-    "react-native-navbar" : "^0.4.8"
+    "tcomb-form-native" : "^0.1.7"
   }
 }
