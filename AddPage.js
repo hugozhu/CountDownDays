@@ -12,24 +12,42 @@ var {
 var Data = [{label: '类型'}, '.', {label: '日期'}, '-', '=', '-', 'save'];
 
 var AddPage =  React.createClass({
-  getInitialState: function() {
+  getDataSource: function(items: Array<any>): ListView.DataSource {
     var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    return ds.cloneWithRows(items);
+  },
+
+  getInitialState: function() {
     return {
-      dataSource: ds.cloneWithRows(Data),
+      dataSource: this.getDataSource(Data),
+      logType: 'in',
     };
+  },
+
+  callback: function(logType) {
+      this.setState({
+          dataSource: this.getDataSource(Data),
+          logType: logType,
+      });
   },
 
   onPress: function () {
       this.props.navigator.push({
           title: '选择类型',
-          component: SelectLogType2,
+          component: SelectLogType,
+          passProps: {
+                        logType: this.state.logType, 
+                        callback: this.callback,
+                    },
       })
   },
+
   renderHeader: function() {
     return (
       <View style={styles.separator}/>
     )
   },
+
   renderRow: function(row: object, sectionID: number, rowID: number) {
       if (row == '.') {
           return (
@@ -53,6 +71,20 @@ var AddPage =  React.createClass({
               </TouchableHighlight>
             </View>
           )       
+      } else if (rowID == 0) {
+          return (
+              <TouchableHighlight onPress={this.onPress} 
+                    underlayColor='#cccccc'
+                    style={[{backgroundColor: '#ffffff', padding: 10}]}>
+                    <View style={styles.row}>
+                      <View style={styles.cell}> 
+                      <Text style={styles.label}>{row.label}</Text>
+                      </View>
+                      <Text style={styles.value}>{SelectLogType.getLabel(this.state.logType)}</Text>
+                      <Text style={styles.arrow}>﹥</Text>
+                    </View>
+              </TouchableHighlight>
+          )           
       } else {
           return (
               <TouchableHighlight onPress={this.onPress} 
@@ -62,8 +94,8 @@ var AddPage =  React.createClass({
                       <View style={styles.cell}> 
                       <Text style={styles.label}>{row.label}</Text>
                       </View>
-                      <Text style={styles.value}>出境</Text>
-                      <Text style={styles.arrow}>&gt;</Text>
+                      <Text style={styles.value}></Text>
+                      <Text style={styles.arrow}>﹥</Text>
                     </View>
               </TouchableHighlight>
           )               
@@ -85,66 +117,39 @@ var AddPage =  React.createClass({
   },  
 });
 
+var SelectLogType = React.createClass({
+  statics: {
+      DATA: [{id:'in', label:'境内'},{id:'out', label:'境外'}],
+      getLabel: function(logType) {
+        for (var i in SelectLogType.DATA) {
+          console.log(SelectLogType.DATA[i].id, logType)
+          if (SelectLogType.DATA[i].id==logType) {
+            return SelectLogType.DATA[i].label;
+          }
+        }
+        return "境内";
+      },
+  },  
 
-
-
-
-class SelectLogType extends AddPage {
-  constructor(props) {
+  getDataSource: function(items: Array<any>): ListView.DataSource {
     var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-    this.state = {
-      dataSource: ds.cloneWithRows([{id:'in', label:'境内'},{id:'out', label:'境外'}]),
-    };
-  }
+    return ds.cloneWithRows(items);
+  },
 
-  renderRow(row: object, sectionID: number, rowID: number) {
-    var height = 0.5;
-    if (rowID == 1) {
-      height = 0;
-    }
-    return (        
-            <TouchableHighlight onPress={this.onPress} 
-              underlayColor='#cccccc'
-              style={[{backgroundColor: '#ffffff'}]}>
-              <View style={{flex: 1, flexDirection:'column'}}>  
-                <View style={[styles.row, {padding: 10}]}>
-                  <View style={styles.cell}> 
-                  <Text style={styles.label}>{row.label}</Text>
-                  </View>
-                </View>
-                <View style={{flex: 1, marginLeft: 10, height: height, backgroundColor:"#aabbaa"}}/>
-              </View>  
-        </TouchableHighlight>
-    );
-  }
-
-  onPress() {
-
-  }
-
-  render() {
-    return (
-      <View style={[styles.scene, { padding: 0}]}>
-        <ListView
-          style={styles.listView} 
-          automaticallyAdjustContentInsets={false}
-          dataSource={this.state.dataSource}
-          renderHeader={this.renderHeader}
-          renderFooter={this.renderHeader}
-          renderRow={this.renderRow}/>
-      </View>
-    );
-  }  
-};
-
-
-
-var SelectLogType2 = React.createClass({
   getInitialState: function() {
-    var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     return {
-      dataSource: ds.cloneWithRows([{id:'in', label:'境内'},{id:'out', label:'境外'}]),
+      dataSource: this.getDataSource(SelectLogType.DATA),
+      selectedId: this.props.logType,
     };
+  },
+
+  onPress: function(id) {
+    // this.setState({
+    //   dataSource: this.getDataSource(SelectLogType.DATA),
+    //   selectedId: id,
+    // });
+    this.props.callback(id);
+    this.props.navigator.pop();
   },
 
   renderRow: function(row: object, sectionID: number, rowID: number) {
@@ -153,7 +158,7 @@ var SelectLogType2 = React.createClass({
       height = 0;
     }
     return (        
-        <TouchableHighlight onPress={this.onPress} 
+        <TouchableHighlight onPress={() => this.onPress(row.id)} 
               underlayColor='#cccccc'
               style={[{backgroundColor: '#ffffff'}]}>
               <View style={{flex: 1, flexDirection:'column'}}>  
@@ -161,17 +166,20 @@ var SelectLogType2 = React.createClass({
                   <View style={styles.cell}> 
                   <Text style={styles.label}>{row.label}</Text>
                   </View>
+                  {this.state.selectedId == row.id ? <Text style={styles.arrow}>✔</Text> : null}
                 </View>
                 <View style={{flex: 1, marginLeft: 10, height: height, backgroundColor:"#aabbaa"}}/>        
               </View>  
         </TouchableHighlight>
     );
   },
+
   renderHeader: function() {
     return (
       <View style={styles.separator}/>
     )
-  },  
+  },
+
   render: function() {
     return (
       <View style={[styles.scene, { padding: 0}]}>
@@ -234,7 +242,7 @@ var styles = StyleSheet.create({
     marginRight: 10,
   },  
   arrow:{
-    fontSize: 8,
+    fontSize: 7,
     textAlign: 'right',
     color:'#cccccc',
   },
