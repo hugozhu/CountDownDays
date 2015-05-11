@@ -17,8 +17,7 @@ var SettingPage =  React.createClass({
   render: function() {
     return (
       <View style={styles.scene}>
-        <Text> Settting </Text>
-        <Text> Settting 12312 3</Text>
+        <Text> 正在建设中... </Text>
       </View>
     );
   },  

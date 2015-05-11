@@ -6,14 +6,15 @@ var {
   View,
   ListView,
   TouchableHighlight,
+  DatePickerIOS,
   StyleSheet,  
 } = React;
 
+var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 var Data = [{label: '类型'}, '.', {label: '日期'}, '-', '=', '-', 'save'];
 
 var AddPage =  React.createClass({
   getDataSource: function(items: Array<any>): ListView.DataSource {
-    var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     return ds.cloneWithRows(items);
   },
 
@@ -21,25 +22,48 @@ var AddPage =  React.createClass({
     return {
       dataSource: this.getDataSource(Data),
       logType: 'in',
+      logDate: new Date(),
     };
   },
 
-  callback: function(logType) {
+  onAddLog: function() {
+      alert(this.state.logType+" "+this.state.logDate);
+  },
+
+  onSelectLogType: function () {
+      this.props.navigator.push({
+          title: '选择类型',
+          component: SelectLogType,
+          passProps: {
+                        logType: this.state.logType, 
+                        callback: this.selectLogTypeCallback,
+                    },
+      })
+  },
+
+  selectLogTypeCallback: function(logType) {
       this.setState({
           dataSource: this.getDataSource(Data),
           logType: logType,
       });
   },
 
-  onPress: function () {
+  onSelectLogDate: function () {
       this.props.navigator.push({
-          title: '选择类型',
-          component: SelectLogType,
+          title: '选择日期',
+          component: SelectLogDate,
           passProps: {
-                        logType: this.state.logType, 
-                        callback: this.callback,
+                        date: this.state.logDate, 
+                        callback: this.selectLogDateCallback,
                     },
       })
+  },  
+
+  selectLogDateCallback: function(logDate) {
+      this.setState({
+          dataSource: this.getDataSource(Data),        
+          logDate: logDate,
+      });
   },
 
   renderHeader: function() {
@@ -64,7 +88,7 @@ var AddPage =  React.createClass({
       } else if (row == 'save') {
           return (
             <View style={[{backgroundColor: '#ffffff'}]}>
-              <TouchableHighlight onPress={this.onPress} 
+              <TouchableHighlight onPress={this.onAddLog} 
                 underlayColor='#cccccc'
                 style={[{padding: 10}]}>
                 <Text style={[{alignSelf: 'center', color:'#0000FF'}]}>保存</Text>
@@ -73,7 +97,7 @@ var AddPage =  React.createClass({
           )       
       } else if (rowID == 0) {
           return (
-              <TouchableHighlight onPress={this.onPress} 
+              <TouchableHighlight onPress={this.onSelectLogType} 
                     underlayColor='#cccccc'
                     style={[{backgroundColor: '#ffffff', padding: 10}]}>
                     <View style={styles.row}>
@@ -87,14 +111,14 @@ var AddPage =  React.createClass({
           )           
       } else {
           return (
-              <TouchableHighlight onPress={this.onPress} 
+              <TouchableHighlight onPress={this.onSelectLogDate} 
                     underlayColor='#cccccc'
                     style={[{backgroundColor: '#ffffff', padding: 10}]}>
                     <View style={styles.row}>
                       <View style={styles.cell}> 
                       <Text style={styles.label}>{row.label}</Text>
                       </View>
-                      <Text style={styles.value}></Text>
+                      <Text style={styles.value}>{this.state.logDate.toDateString()}</Text>
                       <Text style={styles.arrow}>﹥</Text>
                     </View>
               </TouchableHighlight>
@@ -132,7 +156,6 @@ var SelectLogType = React.createClass({
   },  
 
   getDataSource: function(items: Array<any>): ListView.DataSource {
-    var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     return ds.cloneWithRows(items);
   },
 
@@ -144,10 +167,6 @@ var SelectLogType = React.createClass({
   },
 
   onPress: function(id) {
-    // this.setState({
-    //   dataSource: this.getDataSource(SelectLogType.DATA),
-    //   selectedId: id,
-    // });
     this.props.callback(id);
     this.props.navigator.pop();
   },
@@ -194,6 +213,41 @@ var SelectLogType = React.createClass({
     );
   },  
 });
+
+
+var SelectLogDate = React.createClass({
+  getDefaultProps: function () {
+    return {
+      date: new Date(),
+    };
+  },
+
+  getInitialState: function() {
+    return {
+      date: this.props.date,
+    };
+  },  
+
+  onDateChange: function(t) {
+    this.props.callback(t);
+    this.setState({
+      date: t,
+    })
+  },
+
+  render: function() {
+      return (
+        <View>
+          <DatePickerIOS
+              date={this.state.date}
+              mode="date"
+              onDateChange={this.onDateChange}
+            />
+        </View>       
+      );
+  }
+});
+
 
 module.exports = AddPage;
 
