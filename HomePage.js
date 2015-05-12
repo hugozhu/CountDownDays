@@ -1,5 +1,42 @@
 'use strict';
 var React    = require('react-native');
+var sqlite   = require('react-native-sqlite');
+
+
+// CREATE TABLE IF NOT EXISTS "log" (
+//    "log_date" text NOT NULL PRIMARY KEY,
+//    "log_type" text NOT NULL,
+//    "longitude" real,
+//    "latitude" real,
+//    "modified" integer NOT NULL
+// );
+
+var sqlite = require('react-native-sqlite');
+sqlite.open("log.sqlite", function (error, database) {
+  if (error) {
+    console.log("Failed to open database:", error);
+    return;
+  }
+  var sql = "SELECT a, b FROM table WHERE field=? AND otherfield=?";
+  var params = ["somestring", 99];
+  database.executeSQL(sql, params, rowCallback, completeCallback);
+  function rowCallback(rowData) {
+    console.log("Got row data:", rowData);
+  }
+  function completeCallback(error) {
+    if (error) {
+      console.log("Failed to execute query:", error);
+      return
+    }
+    console.log("Query complete!");
+    database.close(function (error) {
+      if (error) {
+        console.log("Failed to close database:", error);
+        return
+      }
+    });
+  }
+});
 
 var Data = [
   { in:true,  date:'2015-03-01' , title:'入境 🚁'},
