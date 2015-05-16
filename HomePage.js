@@ -2,6 +2,7 @@
 var React    = require('react-native');
 var SQLite   = require('react-native-sqlite');
 var EditPage = require('./EditPage');
+var Forms    = require('./Forms');
 
 var {
   Text,
@@ -22,14 +23,21 @@ var HomePage =  React.createClass({
     };
   },
   
+  renderHeader: function() {
+    return (
+      <View style={styles.separator}/>
+    )
+  },
+
   render: function() {
     return (
-      <View style={[styles.scene, {backgroundColor: '#ECF6E8'}]}>
+      <View style={[styles.scene]}>
         <Text style={styles.head}>已在境内 56 天</Text>
         <ListView
           style={styles.listView} 
           automaticallyAdjustContentInsets={false}
           dataSource={this.state.dataSource}
+          renderHeader={this.renderHeader}
           renderRow={this.renderRow}>
         </ListView>
       </View>
@@ -68,24 +76,22 @@ var HomePage =  React.createClass({
       })
   },
 
-  renderRow: function(row: object, sectionID: number, rowID: number) { 
-        if (row === null) {
-            return (
-              <View style={styles.separator} />
-            );
-        }
+  renderRow: function(row: object, sectionID: number, rowID: number) {
         return (
-            <TouchableHighlight onPress={() => this.onEditPageButtonPress(row)}>
+            <TouchableHighlight
+                underlayColor='#cccccc'
+                style={[{backgroundColor: '#ffffff'}]}          
+                onPress={() => this.onEditPageButtonPress(row)}>
               <View>
-                <View style={styles.separator} />
                 <View style={styles.row}>
                   <View style={styles.cell}> 
                       <Text style={styles.date}>{row.log_date}</Text> 
                   </View>            
                   <View style={styles.cell}> 
-                      <Text style={styles.title}>{row.log_type}</Text>                   
+                      <Text style={styles.title}>{Forms.SelectLogType.getLabel(row.log_type)}</Text> 
                   </View>
                 </View>
+                <View style={styles.separator} />
               </View>
             </TouchableHighlight>
       );
@@ -93,12 +99,10 @@ var HomePage =  React.createClass({
 });
 
 module.exports = HomePage;
-module.exports.onLogChanged = function() {
-    console.log("hello");
-}
 
 var styles = StyleSheet.create({
   scene: {
+      backgroundColor: '#eeeeee',
       paddingTop: 74,
       flex: 1,
   },
@@ -113,25 +117,25 @@ var styles = StyleSheet.create({
       alignItems: 'center',
       borderWidth: 0,
   },
+  
   cell: {
       flex: 1,
       padding: 10,
-      height: 50,
-      backgroundColor: '#eeeeee',
   },
+
   separator: {
-    height: 1,
-    backgroundColor: '#ffffff',
-  },  
+    height: 0.5,
+    backgroundColor: '#cccccc',
+  },    
+
   listView: {
+    backgroundColor: '#eeeeee',    
   }, 
+
   title: {
-      fontSize: 20,
       textAlign: 'center',
   },  
   date: {
-      fontSize: 20,    
-      height:30,
       textAlign: 'center',
   },
 });
