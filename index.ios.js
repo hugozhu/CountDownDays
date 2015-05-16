@@ -69,7 +69,7 @@ var CountDownDays = React.createClass({
           title: '增加记录',
           component: AddPage,
           passProps: {
-              callback: this.onLogChanged,
+              callback: this.onLogChanged,              
           },
       })
   },

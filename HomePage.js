@@ -54,15 +54,16 @@ var HomePage =  React.createClass({
   },
 
   onLogChanged: function() {
-    console.log("------------------");
+    this.componentDidMount();
   },
 
-  onEditPageButtonPress: function(id) {  
+  onEditPageButtonPress: function(row) {  
       this.props.navigator.push({
           title: '修改记录',
           component: EditPage,
           passProps: {
               callback: this.onLogChanged,
+              log: row,
           },          
       })
   },
@@ -74,7 +75,7 @@ var HomePage =  React.createClass({
             );
         }
         return (
-            <TouchableHighlight onPress={() => this.onEditPageButtonPress(rowID)}>
+            <TouchableHighlight onPress={() => this.onEditPageButtonPress(row)}>
               <View>
                 <View style={styles.separator} />
                 <View style={styles.row}>
