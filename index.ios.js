@@ -17,6 +17,8 @@ var HomePage      = require('./HomePage');
 var AddPage       = require('./AddPage');
 var SettingPage   = require('./SettingPage');
 
+
+var homepageInstance;
 var CountDownDays = React.createClass({
   statics: {
     title: 'CountDownDays',
@@ -55,12 +57,20 @@ var CountDownDays = React.createClass({
           </TabBarIOS.Item>
         </TabBarIOS>
       );
-  }, 
+  },
+
+  onLogChanged: function() {
+      //刷新数据
+      homepageInstance.componentDidMount()
+  },
 
   onAddPageButtonPress: function() {
       this.refs.nav_home.push({
           title: '增加记录',
-          component: AddPage
+          component: AddPage,
+          passProps: {
+              callback: this.onLogChanged,
+          },
       })
   },
 
@@ -75,6 +85,12 @@ var CountDownDays = React.createClass({
             title: '出入境记录',
             rightButtonTitle: '＋',
             onRightButtonPress: this.onAddPageButtonPress,
+            passProps: { 
+                callback: function(homepage) {
+                    //获取到homepage对象，供刷新使用
+                    homepageInstance = homepage;
+                }
+            },
         }} />
     );
   },

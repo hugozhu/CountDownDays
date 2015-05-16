@@ -1,5 +1,6 @@
 'use strict';
-var React = require('react-native');
+var React  = require('react-native');
+var SQLite = require('react-native-sqlite');
 
 var {
   Text,
@@ -27,7 +28,47 @@ var AddPage =  React.createClass({
   },
 
   onAddLog: function() {
-      alert(this.state.logType+" "+this.state.logDate);
+    var type = this.state.logType;
+    var date = this.state.logDate.toISOString().slice(0, 10);
+    console.log(this.props);
+    var callback = this.props.callback;
+    var navigator = this.props.navigator;
+
+    SQLite.open("data.sqlite", function (error, database) {
+        if (error) {
+          console.log("Failed to open database:", error);
+          return;
+        }
+
+        var sql = "INSERT INTO log (log_date, log_type, modified) VALUES (?, ?, ?)";      
+        var params = [date, type, 0];
+        database.executeSQL(sql, params, rowCallback, completeCallback);
+
+        function rowCallback(rowData) {
+            console.log("Got row data:", rowData);
+        }
+
+        function completeCallback(error) {
+          var success = true;
+          if (error) {
+            alert(error);
+            success = false;
+          }
+          console.log("Query complete!");
+          database.close(function (error) {
+            if (error) {
+              console.log("Failed to close database:", error);
+              return
+            }
+
+            //保存成功，返回到所有记录
+            if (success) {
+              callback();
+              navigator.pop();
+            }
+          });
+        }
+    });      
   },
 
   onSelectLogType: function () {
@@ -35,9 +76,9 @@ var AddPage =  React.createClass({
           title: '选择类型',
           component: SelectLogType,
           passProps: {
-                        logType: this.state.logType, 
-                        callback: this.selectLogTypeCallback,
-                    },
+              logType: this.state.logType, 
+              callback: this.selectLogTypeCallback,
+          },
       })
   },
 
@@ -143,7 +184,7 @@ var AddPage =  React.createClass({
 
 var SelectLogType = React.createClass({
   statics: {
-      DATA: [{id:'in', label:'境内'},{id:'out', label:'境外'}],
+      DATA: [{id:'in', label:'境内'},{id:'out', label:'境外'},{id:'arrival', label:'入境'},{id:'departure', label:'出境'}],
       getLabel: function(logType) {
         for (var i in SelectLogType.DATA) {
           console.log(SelectLogType.DATA[i].id, logType)
@@ -173,7 +214,8 @@ var SelectLogType = React.createClass({
 
   renderRow: function(row: object, sectionID: number, rowID: number) {
     var height = 0.5;
-    if (rowID == 1) {
+    if (rowID == SelectLogType.DATA.length-1) {
+      //最后一行不加分隔线
       height = 0;
     }
     return (        
@@ -188,7 +230,7 @@ var SelectLogType = React.createClass({
                   {this.state.selectedId == row.id ? <Text style={styles.arrow}>✔</Text> : null}
                 </View>
                 <View style={{flex: 1, marginLeft: 10, height: height, backgroundColor:"#aabbaa"}}/>        
-              </View>  
+              </View>
         </TouchableHighlight>
     );
   },
@@ -238,6 +280,7 @@ var SelectLogDate = React.createClass({
   render: function() {
       return (
         <View>
+          <Text style={[{paddingTop: 80, paddingLeft: 20, color:'#0000FF'}]}>请选择记录日期：</Text>  
           <DatePickerIOS
               date={this.state.date}
               mode="date"
@@ -247,7 +290,6 @@ var SelectLogDate = React.createClass({
       );
   }
 });
-
 
 module.exports = AddPage;
 

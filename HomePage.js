@@ -1,52 +1,7 @@
 'use strict';
 var React    = require('react-native');
-var sqlite   = require('react-native-sqlite');
-
-
-// CREATE TABLE IF NOT EXISTS "log" (
-//    "log_date" text NOT NULL PRIMARY KEY,
-//    "log_type" text NOT NULL,
-//    "longitude" real,
-//    "latitude" real,
-//    "modified" integer NOT NULL
-// );
-
-var sqlite = require('react-native-sqlite');
-sqlite.open("log.sqlite", function (error, database) {
-  if (error) {
-    console.log("Failed to open database:", error);
-    return;
-  }
-  var sql = "SELECT a, b FROM table WHERE field=? AND otherfield=?";
-  var params = ["somestring", 99];
-  database.executeSQL(sql, params, rowCallback, completeCallback);
-  function rowCallback(rowData) {
-    console.log("Got row data:", rowData);
-  }
-  function completeCallback(error) {
-    if (error) {
-      console.log("Failed to execute query:", error);
-      return
-    }
-    console.log("Query complete!");
-    database.close(function (error) {
-      if (error) {
-        console.log("Failed to close database:", error);
-        return
-      }
-    });
-  }
-});
-
-var Data = [
-  { in:true,  date:'2015-03-01' , title:'入境 🚁'},
-  { in:false, date:'2015-03-24' , title:'出境 ✈'},
-  { in:true,  date:'2015-04-01' , title:'入境 🚁'},
-  { in:false, date:'2015-04-24' , title:'出境 ✈'},
-  { in:true,  date:'2015-05-01' , title:'入境 🚁'},
-  { in:false, date:'2015-05-04' , title:'出境 ✈'},
-  null,
-];
+var SQLite   = require('react-native-sqlite');
+var EditPage = require('./EditPage');
 
 var {
   Text,
@@ -56,13 +11,14 @@ var {
   StyleSheet,
 } = React;
 
-var EditPage = require('./EditPage');
+var database = SQLite.open("data.sqlite");
 
 var HomePage =  React.createClass({
   getInitialState: function() {
+    this.props.callback(this)
     var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     return {
-      dataSource: ds.cloneWithRows(Data),
+      dataSource: ds,
     };
   },
   
@@ -80,11 +36,34 @@ var HomePage =  React.createClass({
     );
   },
 
+  componentDidMount: function () {
+    var logs = [];
+    database.executeSQL(
+      "SELECT * FROM log ORDER BY log_date DESC",
+      [],
+      (row) => {
+        logs.push(row);
+      },
+      (error) => {
+        if (error) {
+          throw error;
+        } else {
+          this.setState({dataSource: this.state.dataSource.cloneWithRows(logs)});
+        }
+      });
+  },
+
+  onLogChanged: function() {
+    console.log("------------------");
+  },
 
   onEditPageButtonPress: function(id) {  
       this.props.navigator.push({
           title: '修改记录',
           component: EditPage,
+          passProps: {
+              callback: this.onLogChanged,
+          },          
       })
   },
 
@@ -100,10 +79,10 @@ var HomePage =  React.createClass({
                 <View style={styles.separator} />
                 <View style={styles.row}>
                   <View style={styles.cell}> 
-                      <Text style={styles.date}>{row.date}</Text> 
+                      <Text style={styles.date}>{row.log_date}</Text> 
                   </View>            
                   <View style={styles.cell}> 
-                      <Text style={styles.title}>{row.title}</Text>                   
+                      <Text style={styles.title}>{row.log_type}</Text>                   
                   </View>
                 </View>
               </View>
@@ -113,6 +92,9 @@ var HomePage =  React.createClass({
 });
 
 module.exports = HomePage;
+module.exports.onLogChanged = function() {
+    console.log("hello");
+}
 
 var styles = StyleSheet.create({
   scene: {
