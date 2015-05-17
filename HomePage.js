@@ -14,6 +14,8 @@ var {
 
 var database = SQLite.open("data.sqlite");
 
+console.log(Forms.styles)
+
 var HomePage =  React.createClass({
   getInitialState: function() {
     this.props.callback(this)
@@ -60,10 +62,21 @@ var HomePage =  React.createClass({
           throw error;
         } else {
           this.setState({
-            total: 10,
-            dataSource: this.state.dataSource.cloneWithRows(logs)}
-          );
+            dataSource: this.state.dataSource.cloneWithRows(logs)
+          });
         }
+      });
+
+    database.executeSQL(
+      "SELECT count(*) as c FROM log WHERE log_type=?",
+      ['in'],
+      (row) => {
+          this.setState({
+            total: row.c,
+          });
+      },
+      (error) => {
+        
       });
   },
 
@@ -82,14 +95,20 @@ var HomePage =  React.createClass({
       })
   },
 
-  renderRow: function(row: object, sectionID: number, rowID: number) {    
+  renderRow: function(row: object, sectionID: number, rowID: number) {
+    var style_row = {};
+    if (row.log_type == 'arrival') {
+        style_row = { backgroundColor:'#ee0000' };
+    } else if (row.log_type == 'departure') {
+        style_row = { backgroundColor:'#0000ee' };
+    }
     return (
         <TouchableHighlight
             underlayColor='#cccccc'
             style={[{backgroundColor: '#ffffff'}]}          
             onPress={() => this.onEditPageButtonPress(row)}>
           <View>
-            <View style={styles.row}>
+            <View style={[styles.row, style_row]}>
               <View style={styles.cell}> 
                   <Text style={styles.date}>{row.log_date}</Text> 
               </View>            
@@ -117,6 +136,7 @@ var styles = StyleSheet.create({
       fontSize: 20,  
       padding: 15,
   },  
+
   row: {
       flexDirection: 'row',
       justifyContent: 'center',

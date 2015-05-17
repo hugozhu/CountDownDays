@@ -1,3 +1,5 @@
+'use strict';
+
 var React  = require('react-native');
 
 var {
@@ -21,8 +23,7 @@ var SelectLogType = React.createClass({
   statics: {
       DATA: [{id:'in', label:'境内'},{id:'out', label:'境外'},{id:'arrival', label:'入境'},{id:'departure', label:'出境'}],
       getLabel: function(logType) {
-        for (var i in SelectLogType.DATA) {
-          console.log(SelectLogType.DATA[i].id, logType)
+        for (var i in SelectLogType.DATA) {          
           if (SelectLogType.DATA[i].id==logType) {
             return SelectLogType.DATA[i].label;
           }
@@ -126,12 +127,6 @@ var SelectLogDate = React.createClass({
   }
 });
 
-module.exports = {
-  SelectLogType: SelectLogType,
-  SelectLogDate: SelectLogDate,
-  formateDate: formateDate,
-}
-
 var styles = StyleSheet.create({
   scene: {
       paddingTop: 74,
@@ -182,3 +177,12 @@ var styles = StyleSheet.create({
     color:'#cccccc',
   },
 });
+
+
+
+module.exports = {
+  SelectLogType: SelectLogType,
+  SelectLogDate: SelectLogDate,
+  formateDate: formateDate,
+  styles: styles,
+}
