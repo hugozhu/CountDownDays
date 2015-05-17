@@ -19,6 +19,7 @@ var HomePage =  React.createClass({
     this.props.callback(this)
     var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     return {
+      total: '...',
       dataSource: ds,
     };
   },
@@ -32,7 +33,9 @@ var HomePage =  React.createClass({
   render: function() {
     return (
       <View style={[styles.scene]}>
-        <Text style={styles.head}>已在境内 56 天</Text>
+        <View style={[{backgroundColor:'#FFFFFF'}]}>
+          <Text style={styles.head}>已在境内 <Text style={[{color: '#FF0000'}]}>{this.state.total}</Text> 天</Text>
+        </View>
         <ListView
           style={styles.listView} 
           automaticallyAdjustContentInsets={false}
@@ -47,7 +50,7 @@ var HomePage =  React.createClass({
   componentDidMount: function () {
     var logs = [];
     database.executeSQL(
-      "SELECT * FROM log ORDER BY log_date DESC",
+      "SELECT * FROM log  ORDER BY log_date DESC LIMIT 60",
       [],
       (row) => {
         logs.push(row);
@@ -56,7 +59,10 @@ var HomePage =  React.createClass({
         if (error) {
           throw error;
         } else {
-          this.setState({dataSource: this.state.dataSource.cloneWithRows(logs)});
+          this.setState({
+            total: 10,
+            dataSource: this.state.dataSource.cloneWithRows(logs)}
+          );
         }
       });
   },
@@ -76,25 +82,25 @@ var HomePage =  React.createClass({
       })
   },
 
-  renderRow: function(row: object, sectionID: number, rowID: number) {
-        return (
-            <TouchableHighlight
-                underlayColor='#cccccc'
-                style={[{backgroundColor: '#ffffff'}]}          
-                onPress={() => this.onEditPageButtonPress(row)}>
-              <View>
-                <View style={styles.row}>
-                  <View style={styles.cell}> 
-                      <Text style={styles.date}>{row.log_date}</Text> 
-                  </View>            
-                  <View style={styles.cell}> 
-                      <Text style={styles.title}>{Forms.SelectLogType.getLabel(row.log_type)}</Text> 
-                  </View>
-                </View>
-                <View style={styles.separator} />
+  renderRow: function(row: object, sectionID: number, rowID: number) {    
+    return (
+        <TouchableHighlight
+            underlayColor='#cccccc'
+            style={[{backgroundColor: '#ffffff'}]}          
+            onPress={() => this.onEditPageButtonPress(row)}>
+          <View>
+            <View style={styles.row}>
+              <View style={styles.cell}> 
+                  <Text style={styles.date}>{row.log_date}</Text> 
+              </View>            
+              <View style={styles.cell}> 
+                  <Text style={styles.title}>{Forms.SelectLogType.getLabel(row.log_type)}</Text> 
               </View>
-            </TouchableHighlight>
-      );
+            </View>
+            <View style={styles.separator} />
+          </View>
+        </TouchableHighlight>
+    );
   }, 
 });
 
@@ -103,13 +109,13 @@ module.exports = HomePage;
 var styles = StyleSheet.create({
   scene: {
       backgroundColor: '#eeeeee',
-      paddingTop: 74,
+      paddingTop: 65,
       flex: 1,
   },
   head: {
       textAlign: 'center',
-      fontSize: 25,  
-      padding: 10,
+      fontSize: 20,  
+      padding: 15,
   },  
   row: {
       flexDirection: 'row',

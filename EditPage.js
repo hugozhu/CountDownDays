@@ -30,7 +30,7 @@ var EditPage =  React.createClass({
 
   onSaveLog: function() {
     var type = this.state.logType;    
-    var date = this.state.logDate.toISOString().slice(0, 10);
+    var date = Forms.formateDate(this.state.logDate);
 
     var log = this.props.log;
     var callback = this.props.callback;

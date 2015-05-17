@@ -11,6 +11,12 @@ var {
 
 var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
+var formateDate =  function toJSONLocal (date) {
+    var local = new Date(date);
+    local.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+    return local.toJSON().slice(0, 10);
+}
+
 var SelectLogType = React.createClass({
   statics: {
       DATA: [{id:'in', label:'境内'},{id:'out', label:'境外'},{id:'arrival', label:'入境'},{id:'departure', label:'出境'}],
@@ -123,6 +129,7 @@ var SelectLogDate = React.createClass({
 module.exports = {
   SelectLogType: SelectLogType,
   SelectLogDate: SelectLogDate,
+  formateDate: formateDate,
 }
 
 var styles = StyleSheet.create({

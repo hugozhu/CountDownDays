@@ -17,7 +17,7 @@ var SettingPage =  React.createClass({
   render: function() {
     return (
       <View style={styles.scene}>
-        <Text> 正在建设中... </Text>
+        <Text> 选择 移民国家 等... </Text>
       </View>
     );
   },  

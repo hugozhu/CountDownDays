@@ -30,8 +30,7 @@ var AddPage =  React.createClass({
 
   onAddLog: function() {
     var type = this.state.logType;
-    var date = this.state.logDate.toISOString().slice(0, 10);
-    console.log(this.props);
+    var date = Forms.formateDate(this.state.logDate);
     var callback = this.props.callback;
     var navigator = this.props.navigator;
 
