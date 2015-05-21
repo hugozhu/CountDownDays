@@ -3,6 +3,15 @@ var React    = require('react-native');
 var SQLite   = require('react-native-sqlite');
 var EditPage = require('./EditPage');
 var Forms    = require('./Forms');
+var {LocationUtil} = require('NativeModules');
+
+LocationUtil.helloworld("hugozhu",
+    (results) => {
+        alert('Error: ' + results);
+    }, 
+    (results) => {
+        alert('Success: ' + results);
+    });
 
 var {
   Text,
@@ -23,6 +32,8 @@ var HomePage =  React.createClass({
     return {
       total: '...',
       dataSource: ds,
+      initialPosition: 'unknown',
+      lastPosition: 'unknown',      
     };
   },
   
@@ -48,6 +59,8 @@ var HomePage =  React.createClass({
       </View>
     );
   },
+
+  watchID: (null: ?number),
 
   componentDidMount: function () {
     var logs = [];
@@ -78,6 +91,24 @@ var HomePage =  React.createClass({
       (error) => {
         
       });
+
+    // navigator.geolocation.getCurrentPosition(
+    //   (initialPosition) => {
+    //         this.setState({initialPosition}),
+    //         console.log(initialPosition)
+    //   },
+    //   (error) => console.log(error),
+    //   {enableHighAccuracy: false, timeout: 100, maximumAge: 1000}
+    // );
+
+    // this.watchID = navigator.geolocation.watchPosition((lastPosition) => {
+    //   this.setState({lastPosition});
+    // });    
+
+  },
+
+ componentWillUnmount: function() {
+    navigator.geolocation.clearWatch(this.watchID);
   },
 
   onLogChanged: function() {

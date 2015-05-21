@@ -11,6 +11,8 @@
 
 #import "RCTRootView.h"
 
+#import <CoreLocation/CoreLocation.h>
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -43,7 +45,7 @@
    * see http://facebook.github.io/react-native/docs/runningondevice.html
    */
 
-//   jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+//  jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"CountDownDays"
@@ -54,6 +56,16 @@
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+  
+  if (![CLLocationManager locationServicesEnabled]) {
+    // location services is disabled, alert user
+    UIAlertView *servicesDisabledAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"DisabledTitle", @"DisabledTitle")
+                                                                    message:NSLocalizedString(@"DisabledMessage", @"DisabledMessage")
+                                                                   delegate:nil
+                                                          cancelButtonTitle:NSLocalizedString(@"OKButtonTitle", @"OKButtonTitle")
+                                                          otherButtonTitles:nil];
+    [servicesDisabledAlert show];
+  }
   return YES;
 }
 
